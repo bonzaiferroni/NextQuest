@@ -18,6 +18,8 @@ class QuestMapModel(
             _uiState.value = value
         }
     val uiState = _uiState.asStateFlow()
+
+
 }
 
 data class QuestMapUiState(
