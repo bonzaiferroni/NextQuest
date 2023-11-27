@@ -1,0 +1,15 @@
+✅ Install scrcpy
+✅ validate app, run on phone
+Add room library to project
+Install joplin, get openAI key
+Create QuestScreen, QuestModel
+
+
+Cause: defaultConfig contains custom BuildConfig fields, but the feature is disabled.
+To enable the feature, add the following to your module-level build.gradle:
+`android.buildFeatures.buildConfig true`
+
+buildFeatures {
+        compose = true
+        buildConfig = true
+    }
