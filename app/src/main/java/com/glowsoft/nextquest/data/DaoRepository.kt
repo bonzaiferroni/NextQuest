@@ -2,16 +2,16 @@ package com.glowsoft.nextquest.data
 
 import com.glowsoft.nextquest.data.dao.QuestDao
 import com.glowsoft.nextquest.model.Quest
+import kotlinx.coroutines.flow.Flow
 
 class DaoRepository(
     private val questDao: QuestDao
 ) : DataRepository {
-    fun getAllQuests() = questDao.getAll()
-    fun getQuestById(id: Int) = questDao.getById(id)
-    fun getQuestByName(name: String) = questDao.getByName(name)
-    fun getQuestByNextQuestId(nextQuestId: Int) = questDao.getByNextQuestId(nextQuestId)
-    suspend fun insertQuest(quest: Quest) = questDao.insert(quest)
-    suspend fun insertAllQuests(vararg quests: Quest) = questDao.insertAll(*quests)
-    suspend fun updateQuest(quest: Quest) = questDao.update(quest)
-    suspend fun deleteQuestById(id: Int) = questDao.deleteById(id)
+    override fun getAllQuests(): Flow<List<Quest>> = questDao.getAll()
+    override fun getQuestById(id: Int) = questDao.getById(id)
+    override fun getPreviousQuestsById(nextQuestId: Int) = questDao.getPreviousQuests(nextQuestId)
+    override fun getRootQuests(): Flow<List<Quest>> = questDao.getRootQuests()
+    override suspend fun insertQuest(quest: Quest) = questDao.insert(quest).toInt()
+    override suspend fun updateQuest(quest: Quest) = questDao.update(quest)
+    override suspend fun deleteQuestById(id: Int) = questDao.deleteById(id)
 }

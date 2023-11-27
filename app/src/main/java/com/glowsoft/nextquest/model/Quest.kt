@@ -29,7 +29,7 @@ data class Quest(
     val repeat: Boolean,
     val repeatInterval: Duration,
     val duration: Duration,
-    val nextQuestId: Int,
+    val nextQuestId: Int?,
     // val avoidance: Float,
     // val curiosity: Float,
     // val confidence: Float,
