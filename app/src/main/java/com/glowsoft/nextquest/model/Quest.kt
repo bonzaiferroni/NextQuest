@@ -1,7 +1,5 @@
 package com.glowsoft.nextquest.model
 
-import androidx.compose.ui.input.key.Key.Companion.I
-import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index

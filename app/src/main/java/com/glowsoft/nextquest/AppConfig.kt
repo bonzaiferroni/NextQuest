@@ -12,6 +12,8 @@ import com.glowsoft.nextquest.ui.home.HomeScreen
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.glowsoft.nextquest.data.AppDatabase
 import com.glowsoft.nextquest.data.DaoRepository
+import com.glowsoft.nextquest.ui.quest.QuestMapModel
+import com.glowsoft.nextquest.ui.quest.QuestMapScreen
 
 val appConfig = EzConfig(
     mainAppIcon = { painterResource(R.drawable.ic_launcher_foreground) },
@@ -22,6 +24,12 @@ val appConfig = EzConfig(
             initializer {
                 // val savedStateHandle = createSavedStateHandle()
                 HomeModel()
+            }
+            initializer {
+                QuestMapModel(
+                    savedStateHandle = createSavedStateHandle(),
+                    dataRepository = dataRepository,
+                )
             }
         }
     },
@@ -36,7 +44,18 @@ val appConfig = EzConfig(
                 title = "Home",
                 emoji = "🏠"
             ),
+        ),
+        ScreenConfig(
+            route = AppRoutes.QuestMap,
+            content = { _, _, vmFactory ->
+                QuestMapScreen(viewModel = viewModel(factory = vmFactory))
+            },
+            drawerLink = DrawerLinkConfig(
+                route = AppRoutes.QuestMap,
+                title = "Quest Map",
+                emoji = "🌄"
+            ),
             isDefaultRoute = true,
-        )
+        ),
     )
 )

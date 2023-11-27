@@ -4,4 +4,5 @@ import com.bollwerks.eznav.EzRoute
 
 object AppRoutes {
     object Home : EzRoute("home")
+    object QuestMap : EzRoute("quest")
 }
