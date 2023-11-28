@@ -1,19 +1,26 @@
 package com.glowsoft.nextquest.ui.quest
 
 import android.content.res.Configuration
+import android.widget.CheckBox
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -71,6 +78,7 @@ fun QuestMapScreen(
         ) {
             uiState.quest?.let {
                 uiState.nextQuest?.let { nextQuest ->
+                    Text(text = "Next quest")
                     OtherQuestCard(
                         name = nextQuest.name,
                         onClick = {
@@ -78,27 +86,26 @@ fun QuestMapScreen(
                         }
                     )
                 } ?: run {
-                    OtherQuestCard(
-                        name = "🗺",
-                        onClick = {
-                            AppRoutes.QuestMap.navigate(navController)
-                        }
-                    )
+                    MapButton()
                 }
 
+                Spacer(modifier = Modifier.height(Gaps.large()))
+                Text(text = "Current quest")
                 OtherQuestCard(it.name) { }
             }
 
             // display previous quests or final quests
             uiState.previousQuests?.let { previousQuests ->
+                Spacer(modifier = Modifier.height(Gaps.large()))
+                Text(text = "Previous quests")
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(Gaps.medium()),
-                    horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     items(previousQuests) { quest ->
                         OtherQuestCard(
                             name = quest.name,
+                            isComplete = quest.isComplete,
                             onClick = {
                                 AppRoutes.QuestMap.navigate(navController, quest.id)
                             }
@@ -111,23 +118,62 @@ fun QuestMapScreen(
 }
 
 @Composable
+fun MapButton(
+    modifier: Modifier = Modifier,
+    navController: NavController? = null,
+) {
+    Button(
+        modifier = modifier,
+        onClick = {
+            AppRoutes.QuestMap.navigate(navController)
+        }
+    ) {
+        Text(text = "Map", style = MaterialTheme.typography.bodyLarge)
+    }
+}
+
+@Composable
 fun OtherQuestCard(
     name: String,
     modifier: Modifier = Modifier,
+    isComplete: Boolean = false,
     onClick: () -> Unit = {},
 ) {
     Card(
-        modifier = modifier.clickable { onClick() },
+        modifier = modifier
+            .clickable(onClick = onClick)
     ) {
-        Row(modifier = Modifier.padding(Paddings.small())) {
+        Row(
+            modifier = modifier
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Checkbox(
+                checked = isComplete,
+                onCheckedChange = { }
+            )
             Text(text = name)
         }
     }
 }
 
 @Composable
-fun CurrentQuestCard() {
-    Card() {
+fun CurrentQuestCard(
+    name: String,
+    modifier: Modifier = Modifier,
+    isComplete: Boolean = false,
+    onClick: () -> Unit = {},
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Checkbox(
+            checked = isComplete,
+            onCheckedChange = { }
+        )
+        Text(text = name)
     }
 }
 
@@ -136,7 +182,7 @@ fun CurrentQuestCard() {
 fun QuestMapPreview() {
     NextQuestTheme {
         var savedStateHandle = SavedStateHandle()
-        savedStateHandle[RouteKeys.id] = null
+        savedStateHandle[RouteKeys.id] = 1
         QuestMapScreen(
             drawerState = DrawerState(DrawerValue.Closed),
             navController = null,

@@ -32,7 +32,7 @@ class QuestMapModel(
                 val quest = dataRepository.getQuestById(questId).first()
                 if (quest.nextQuestId != null) {
                     val nextQuest = dataRepository.getQuestById(quest.nextQuestId).first()
-                    state = state.copy(quest = nextQuest, nextQuest = nextQuest)
+                    state = state.copy(quest = quest, nextQuest = nextQuest)
                 } else {
                     state = state.copy(quest = quest)
                 }

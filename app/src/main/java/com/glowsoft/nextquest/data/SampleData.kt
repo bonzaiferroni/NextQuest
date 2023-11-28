@@ -11,7 +11,8 @@ object SampleData {
             Quest(id = ++id, name = "make coffee").apply {
                 nextQuestId = this.id
             },
-            Quest(id = ++id, name = "throw away used filter", nextQuestId = nextQuestId),
+            Quest(id = ++id, name = "throw away used filter", nextQuestId = nextQuestId,
+                isComplete = true),
             Quest(id = ++id, name = "add coffee", nextQuestId = nextQuestId).apply {
                 nextQuestId = this.id
             },

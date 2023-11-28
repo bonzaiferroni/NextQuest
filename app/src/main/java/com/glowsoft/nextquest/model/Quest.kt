@@ -24,6 +24,7 @@ data class Quest(
     val id: Int,
     val name: String = "my quest",
     val description: String? = null,
+    val isComplete: Boolean = false,
     // val passCondition: String?,
     // val due: Instant?,
     // val repeat: Boolean = false,
