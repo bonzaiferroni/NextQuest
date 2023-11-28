@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class QuestMapModel(
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
     private val dataRepository: DataRepository,
 ) : ViewModel() {
 
@@ -29,12 +29,13 @@ class QuestMapModel(
     init {
         if (questId != 0) {
             viewModelScope.launch {
-                val quest = dataRepository.getQuestById(questId).first()
-                if (quest.nextQuestId != null) {
-                    val nextQuest = dataRepository.getQuestById(quest.nextQuestId).first()
+                dataRepository.getQuestById(questId).collect { quest ->
+                    val nextQuest = if (quest.nextQuestId != null) {
+                        dataRepository.getQuestById(quest.nextQuestId).first()
+                    } else {
+                        null
+                    }
                     state = state.copy(quest = quest, nextQuest = nextQuest)
-                } else {
-                    state = state.copy(quest = quest)
                 }
             }
             viewModelScope.launch {
@@ -47,6 +48,15 @@ class QuestMapModel(
                 dataRepository.getFinalQuests().collect {
                     state = state.copy(previousQuests = it)
                 }
+            }
+        }
+    }
+
+    fun toggleComplete(isComplete: Boolean) {
+        state.quest?.let {
+            viewModelScope.launch {
+                val quest = it.copy(isComplete = isComplete)
+                dataRepository.updateQuest(quest)
             }
         }
     }
