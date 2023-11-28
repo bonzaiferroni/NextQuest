@@ -32,4 +32,8 @@ class SampleRepository : DataRepository {
     override suspend fun deleteQuestById(id: Int) {
         // no-op
     }
+
+    override suspend fun deleteAllQuests() {
+        // no-op
+    }
 }

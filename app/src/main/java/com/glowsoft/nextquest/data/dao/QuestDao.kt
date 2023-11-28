@@ -33,4 +33,7 @@ interface QuestDao {
 
     @Query("DELETE FROM quest WHERE id = :id")
     suspend fun deleteById(id: Int)
+
+    @Query("DELETE FROM quest")
+    suspend fun deleteAll()
 }

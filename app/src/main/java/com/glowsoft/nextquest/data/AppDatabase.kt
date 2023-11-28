@@ -8,7 +8,7 @@ import androidx.room.TypeConverters
 import com.glowsoft.nextquest.data.dao.QuestDao
 import com.glowsoft.nextquest.model.Quest
 
-@Database(entities = [Quest::class], version = 1, exportSchema = true)
+@Database(entities = [Quest::class], version = 2, exportSchema = true)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun questDao(): QuestDao

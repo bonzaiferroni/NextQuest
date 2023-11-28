@@ -11,4 +11,5 @@ interface DataRepository {
     suspend fun insertQuest(quest: Quest): Int
     suspend fun updateQuest(quest: Quest)
     suspend fun deleteQuestById(id: Int)
+    suspend fun deleteAllQuests()
 }

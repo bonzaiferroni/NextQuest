@@ -14,4 +14,5 @@ class DaoRepository(
     override suspend fun insertQuest(quest: Quest) = questDao.insert(quest).toInt()
     override suspend fun updateQuest(quest: Quest) = questDao.update(quest)
     override suspend fun deleteQuestById(id: Int) = questDao.deleteById(id)
+    override suspend fun deleteAllQuests() = questDao.deleteAll()
 }

@@ -1,8 +1,5 @@
 package com.glowsoft.nextquest.ui.quest
 
-import android.content.res.Configuration
-import android.widget.CheckBox
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,13 +10,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.outlined.ArrowForward
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DrawerState
@@ -32,17 +27,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavController
 import com.bollwerks.eznav.EzScaffold
 import com.bollwerks.eznav.ScreenMenuItem
 import com.bollwerks.eznav.model.FabConfig
-import com.bollwerks.eznav.utils.Gaps
-import com.bollwerks.eznav.utils.Paddings
-import com.bollwerks.eznav.utils.PreviewDark
-import com.bollwerks.eznav.utils.spacedBySmall
+import com.glowsoft.nextquest.utils.Gaps
+import com.glowsoft.nextquest.utils.Paddings
+import com.glowsoft.nextquest.utils.PreviewDark
+import com.glowsoft.nextquest.utils.spacedBySmall
 import com.glowsoft.nextquest.AppRoutes
 import com.glowsoft.nextquest.RouteKeys
 import com.glowsoft.nextquest.data.SampleRepository

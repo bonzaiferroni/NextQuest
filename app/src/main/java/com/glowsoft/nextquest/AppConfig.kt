@@ -10,8 +10,11 @@ import com.bollwerks.eznav.model.ScreenConfig
 import com.glowsoft.nextquest.ui.home.HomeModel
 import com.glowsoft.nextquest.ui.home.HomeScreen
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.bollwerks.eznav.model.ScaffoldConfig
 import com.glowsoft.nextquest.data.AppDatabase
 import com.glowsoft.nextquest.data.DaoRepository
+import com.glowsoft.nextquest.ui.export.ExportModel
+import com.glowsoft.nextquest.ui.export.ExportScreen
 import com.glowsoft.nextquest.ui.quest.QuestMapModel
 import com.glowsoft.nextquest.ui.quest.QuestMapScreen
 
@@ -31,6 +34,11 @@ val appConfig = EzConfig(
                     dataRepository = dataRepository,
                 )
             }
+            initializer {
+                ExportModel(
+                    dataRepository = dataRepository,
+                )
+            }
         }
     },
     screens = listOf(
@@ -44,6 +52,9 @@ val appConfig = EzConfig(
                 title = "Home",
                 emoji = "🏠"
             ),
+            scaffold = ScaffoldConfig(
+                title = "Home"
+            )
         ),
         ScreenConfig(
             route = AppRoutes.QuestMap,
@@ -59,7 +70,25 @@ val appConfig = EzConfig(
                 title = "Quest Map",
                 emoji = "🌄"
             ),
-            isDefaultRoute = true,
         ),
+        ScreenConfig(
+            route = AppRoutes.Export,
+            content = { navController, drawerState, vmFactory ->
+                ExportScreen(
+                    navController = navController,
+                    drawerState = drawerState,
+                    viewModel = viewModel(factory = vmFactory)
+                )
+            },
+            drawerLink = DrawerLinkConfig(
+                route = AppRoutes.Export,
+                title = "Export",
+                emoji = "📤"
+            ),
+            scaffold = ScaffoldConfig(
+                title = "📤"
+            ),
+            isDefaultRoute = true,
+        )
     )
 )

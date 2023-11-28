@@ -20,6 +20,7 @@ object AppRoutes {
             return savedStateHandle[RouteKeys.id]
         }
     }
+    object Export : EzRoute("export")
 }
 
 object RouteKeys {
