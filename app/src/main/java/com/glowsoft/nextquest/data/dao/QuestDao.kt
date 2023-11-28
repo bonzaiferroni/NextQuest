@@ -22,11 +22,8 @@ interface QuestDao {
     @Query("SELECT * FROM quest WHERE nextQuestId = :nextQuestId")
     fun getPreviousQuests(nextQuestId: Int): Flow<List<Quest>>
 
-    @Query("""
-        SELECT * FROM quest
-        WHERE id NOT IN (SELECT nextQuestId FROM quest WHERE nextQuestId IS NOT NULL)
-    """)
-    fun getRootQuests(): Flow<List<Quest>>
+    @Query("SELECT * FROM quest WHERE nextQuestId IS NULL")
+    fun getFinalQuests(): Flow<List<Quest>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(quest: Quest): Long

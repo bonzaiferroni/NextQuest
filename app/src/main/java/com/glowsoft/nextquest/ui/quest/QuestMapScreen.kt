@@ -1,5 +1,6 @@
 package com.glowsoft.nextquest.ui.quest
 
+import android.content.res.Configuration
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,19 +13,26 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavController
 import com.bollwerks.eznav.EzScaffold
 import com.bollwerks.eznav.ScreenMenuItem
 import com.bollwerks.eznav.model.FabConfig
 import com.bollwerks.eznav.utils.Gaps
 import com.bollwerks.eznav.utils.Paddings
+import com.bollwerks.eznav.utils.PreviewDark
 import com.glowsoft.nextquest.AppRoutes
+import com.glowsoft.nextquest.RouteKeys
+import com.glowsoft.nextquest.data.SampleRepository
+import com.glowsoft.nextquest.ui.theme.NextQuestTheme
 
 @Composable
 fun QuestMapScreen(
@@ -61,15 +69,15 @@ fun QuestMapScreen(
                 .padding(horizontal = Paddings.small()),
             verticalArrangement = Arrangement.spacedBy(Gaps.medium()),
         ) {
-            uiState.nextQuest?.let { nextQuest ->
-                OtherQuestCard(
-                    name = nextQuest.name,
-                    onClick = {
-                        AppRoutes.QuestMap.navigate(navController, nextQuest.id)
-                    }
-                )
-            } ?: run {
-                if (uiState.quest != null) {
+            uiState.quest?.let {
+                uiState.nextQuest?.let { nextQuest ->
+                    OtherQuestCard(
+                        name = nextQuest.name,
+                        onClick = {
+                            AppRoutes.QuestMap.navigate(navController, nextQuest.id)
+                        }
+                    )
+                } ?: run {
                     OtherQuestCard(
                         name = "🗺",
                         onClick = {
@@ -77,13 +85,11 @@ fun QuestMapScreen(
                         }
                     )
                 }
-            }
 
-            uiState.quest?.let {
                 OtherQuestCard(it.name) { }
             }
 
-            // display previous quests
+            // display previous quests or final quests
             uiState.previousQuests?.let { previousQuests ->
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(Gaps.medium()),
@@ -122,5 +128,19 @@ fun OtherQuestCard(
 @Composable
 fun CurrentQuestCard() {
     Card() {
+    }
+}
+
+@PreviewDark
+@Composable
+fun QuestMapPreview() {
+    NextQuestTheme {
+        var savedStateHandle = SavedStateHandle()
+        savedStateHandle[RouteKeys.id] = null
+        QuestMapScreen(
+            drawerState = DrawerState(DrawerValue.Closed),
+            navController = null,
+            viewModel = QuestMapModel(savedStateHandle, SampleRepository()),
+        )
     }
 }

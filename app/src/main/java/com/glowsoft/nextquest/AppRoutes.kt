@@ -10,7 +10,7 @@ object AppRoutes {
     object Home : EzRoute("home")
     object QuestMap : EzRoute(
         "quest_map",
-        RouteParam(RouteKeys.id, NavType.IntType, true)
+        RouteParam(RouteKeys.id, NavType.IntType, true, 0)
     ) {
         fun navigate(navController: NavController?, id: Int? = null) {
             navigate(navController, RouteKeys.id to id)

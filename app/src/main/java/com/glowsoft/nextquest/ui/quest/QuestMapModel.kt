@@ -16,7 +16,7 @@ class QuestMapModel(
     private val dataRepository: DataRepository,
 ) : ViewModel() {
 
-    private val questId: Int? = AppRoutes.QuestMap.getId(savedStateHandle = savedStateHandle)
+    private val questId: Int = AppRoutes.QuestMap.getId(savedStateHandle = savedStateHandle) ?: 0
 
     private val _uiState = MutableStateFlow(QuestMapUiState())
     private var state
@@ -27,7 +27,7 @@ class QuestMapModel(
     val uiState = _uiState.asStateFlow()
 
     init {
-        if (questId != null) {
+        if (questId != 0) {
             viewModelScope.launch {
                 val quest = dataRepository.getQuestById(questId).first()
                 if (quest.nextQuestId != null) {
@@ -44,7 +44,7 @@ class QuestMapModel(
             }
         } else {
             viewModelScope.launch {
-                dataRepository.getRootQuests().collect {
+                dataRepository.getFinalQuests().collect {
                     state = state.copy(previousQuests = it)
                 }
             }
