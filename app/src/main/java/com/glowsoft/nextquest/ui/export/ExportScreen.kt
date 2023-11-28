@@ -85,6 +85,10 @@ fun ExportScreen(
                     name = "Import sample data",
                     onClick = viewModel::importSampleData,
                 ),
+                MoreMenuItem(
+                    name = "Clear database",
+                    onClick = viewModel::clearDatabase,
+                )
             ))
         }
 
@@ -97,7 +101,8 @@ fun ExportScreen(
             items(uiState.filenames) { filename ->
                 SavedFileCard(
                     filename = filename,
-                    onImport = { viewModel.importJson(context, filename) }
+                    onImport = { viewModel.importJson(context, filename) },
+                    onDelete = { viewModel.deleteFile(it) },
                 )
             }
         }
@@ -108,6 +113,7 @@ fun ExportScreen(
 fun SavedFileCard(
     filename: String,
     onImport: () -> Unit,
+    onDelete: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Card(modifier = modifier) {
@@ -127,7 +133,7 @@ fun SavedFileCard(
             }
             Button(
                 modifier= Modifier.size(40.dp),
-                onClick = onImport,
+                onClick = { onDelete(filename) },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.error,
                     contentColor = MaterialTheme.colorScheme.onError,
@@ -136,7 +142,7 @@ fun SavedFileCard(
             ) {
                 Icon(
                     imageVector = Icons.Default.Delete,
-                    contentDescription = "More"
+                    contentDescription = "delete"
                 )
             }
         }
@@ -151,7 +157,7 @@ fun ExportScreenPreview() {
             ExportScreen(
                 navController = null,
                 drawerState = null,
-                viewModel = ExportModel(SampleRepository())
+                viewModel = ExportModel(SampleRepository(), "")
             )
         }
     }
@@ -164,7 +170,8 @@ fun SavedFileCardPreview() {
         Surface {
             SavedFileCard(
                 filename = "test",
-                onImport = {}
+                onImport = {},
+                onDelete = {},
             )
         }
     }

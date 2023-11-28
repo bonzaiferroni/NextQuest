@@ -20,6 +20,7 @@ import java.io.File
 
 class ExportModel(
     private val dataRepository: DataRepository,
+    private val filesDirPath: String,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ExportUiState())
@@ -39,17 +40,17 @@ class ExportModel(
     }
 
     fun exportMap(context: Context, filename: String) {
-        val validFilename = if (filename.endsWith(".json")) filename else "$filename.json"
+        val validFilename = toValidFilename(filename)
         viewModelScope.launch {
             val quests = dataRepository.getAllQuests().first()
             val snapshot = DataSnapshot(quests = quests)
-            context.objectToFile(snapshot, validFilename)
+            context.objectToFile(snapshot, validFilename, path)
             updateFilenames()
         }
     }
 
     fun importJson(context: Context, filename: String) {
-        val json = context.loadJsonFromFile(filename)
+        val json = context.loadJsonFromFile(toValidFilename(filename), path)
         val snapshot = jsonToObject<DataSnapshot>(json)
         importMap(snapshot.quests)
     }
@@ -60,6 +61,22 @@ class ExportModel(
 
     fun importSampleData() {
         importMap(SampleData.quests)
+    }
+
+    fun deleteFile(filename: String) {
+        val file = File("$filesDirPath/$path/${toValidFilename(filename)}")
+        file.delete()
+        updateFilenames()
+    }
+
+    fun clearDatabase() {
+        viewModelScope.launch {
+            dataRepository.deleteAllQuests()
+        }
+    }
+
+    private fun toValidFilename(filename: String): String {
+        return if (filename.endsWith(".json")) filename else "$filename.json"
     }
 
     private fun importMap(quests: List<Quest>) {
@@ -73,8 +90,7 @@ class ExportModel(
 
     private fun updateFilenames() {
         viewModelScope.launch {
-            val path = "/snapshots"
-            val filenames = File(path).listFiles()
+            val filenames = File("$filesDirPath/$path").listFiles()
                 ?.map { it.name }
                 ?.map { it.removeSuffix(".json") }
                 ?: emptyList()
@@ -88,3 +104,5 @@ data class ExportUiState(
     val overwrite: Boolean = true,
     val filenames: List<String> = emptyList(),
 )
+
+private val path = "snapshots"

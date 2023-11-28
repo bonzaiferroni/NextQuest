@@ -37,6 +37,7 @@ val appConfig = EzConfig(
             initializer {
                 ExportModel(
                     dataRepository = dataRepository,
+                    filesDirPath = context.filesDir.path,
                 )
             }
         }
