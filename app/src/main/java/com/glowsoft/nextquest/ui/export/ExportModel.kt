@@ -22,7 +22,6 @@ class ExportModel(
     private val dataRepository: DataRepository,
     private val filesDirPath: String,
 ) : ViewModel() {
-
     private val _uiState = MutableStateFlow(ExportUiState())
     private var state
         get() = _uiState.value
@@ -30,6 +29,12 @@ class ExportModel(
             _uiState.value = value
         }
     val uiState = _uiState.asStateFlow()
+    private var message
+        get() = state.message
+        set(value) {
+            val msg = if (state.message == value && value != null) "$value (again)" else value
+            state = state.copy(message = msg)
+        }
 
     init {
         updateFilenames()
@@ -72,6 +77,7 @@ class ExportModel(
     fun clearDatabase() {
         viewModelScope.launch {
             dataRepository.deleteAllQuests()
+            message = "Cleared database"
         }
     }
 
@@ -85,6 +91,7 @@ class ExportModel(
                 dataRepository.deleteAllQuests()
             }
             dataRepository.insertQuests(quests)
+            message = "Imported ${quests.size} quests"
         }
     }
 
@@ -103,6 +110,7 @@ data class ExportUiState(
     val newFilename: String = "snapshot.json",
     val overwrite: Boolean = true,
     val filenames: List<String> = emptyList(),
+    val message: String? = null,
 )
 
 private val path = "snapshots"

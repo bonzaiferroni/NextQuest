@@ -37,6 +37,7 @@ import com.glowsoft.nextquest.data.SampleRepository
 import com.glowsoft.nextquest.ui.theme.NextQuestTheme
 import com.glowsoft.nextquest.utils.Paddings
 import com.glowsoft.nextquest.utils.PreviewDark
+import com.glowsoft.nextquest.utils.ghostui.Toasty
 import com.glowsoft.nextquest.utils.paddingSmall
 import com.glowsoft.nextquest.utils.spacedBySmall
 
@@ -49,6 +50,9 @@ fun ExportScreen(
 ) {
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsState()
+
+    Toasty(text = uiState.message)
+
     Column(
         modifier = modifier
             .paddingSmall(),
