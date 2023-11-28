@@ -95,6 +95,7 @@ fun QuestMapScreen(
                 CurrentQuestCard(
                     name = it.name,
                     isComplete = it.isComplete,
+                    isReady = uiState.previousQuests?.all { quest -> quest.isComplete } ?: true,
                     onToggleComplete = viewModel::toggleComplete,
                 )
                 Spacer(modifier = Modifier.height(Gaps.large()))
@@ -187,6 +188,7 @@ fun CurrentQuestCard(
     name: String,
     modifier: Modifier = Modifier,
     isComplete: Boolean = false,
+    isReady: Boolean = false,
     onToggleComplete: (Boolean) -> Unit,
 ) {
     Card(
@@ -199,6 +201,7 @@ fun CurrentQuestCard(
             Checkbox(
                 checked = isComplete,
                 onCheckedChange = onToggleComplete,
+                enabled = isReady,
             )
             Text(text = name)
         }
