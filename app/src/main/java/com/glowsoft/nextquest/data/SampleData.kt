@@ -11,17 +11,17 @@ object SampleData {
             Quest(id = ++id, name = "make coffee").apply {
                 nextQuestId = this.id
             },
-            Quest(id = ++id, name = "throw away used filter", nextQuestId = nextQuestId,
+            Quest(id = ++id, name = "throw away used filter", superQuestId = nextQuestId,
                 isComplete = true),
-            Quest(id = ++id, name = "add coffee", nextQuestId = nextQuestId).apply {
+            Quest(id = ++id, name = "add coffee", superQuestId = nextQuestId).apply {
                 nextQuestId = this.id
             },
-            Quest(id = ++id, name = "add filter", nextQuestId = nextQuestId),
+            Quest(id = ++id, name = "add filter", superQuestId = nextQuestId),
             Quest(id = ++id, name = "get mail").apply {
                 nextQuestId = this.id
             },
-            Quest(id = ++id, name = "put on shoes", nextQuestId = nextQuestId),
-            Quest(id = ++id, name = "get key", nextQuestId = nextQuestId),
+            Quest(id = ++id, name = "put on shoes", superQuestId = nextQuestId),
+            Quest(id = ++id, name = "get key", superQuestId = nextQuestId),
         )
     }
 }

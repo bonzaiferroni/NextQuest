@@ -21,6 +21,7 @@ import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -41,6 +42,8 @@ import com.glowsoft.nextquest.AppRoutes
 import com.glowsoft.nextquest.RouteKeys
 import com.glowsoft.nextquest.data.SampleRepository
 import com.glowsoft.nextquest.ui.theme.NextQuestTheme
+import com.glowsoft.nextquest.utils.ghostui.Popup
+import com.glowsoft.nextquest.utils.ghostui.PopupButtons
 
 @Composable
 fun QuestMapScreen(
@@ -51,15 +54,21 @@ fun QuestMapScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    NewQuestPopup(
+        showNewQuestPopup = uiState.showNewQuestPopup,
+        newQuestName = uiState.newQuestName,
+        onNewQuestNameChange = viewModel::onNewQuestNameChange,
+        createNewQuest = viewModel::createNewQuest,
+        cancelNewQuest = viewModel::toggleNewQuestPopup,
+    )
+
     EzScaffold(
         modifier = modifier,
         drawerState = drawerState,
         title = "🌄",
         fabConfig = FabConfig(
             icon = Icons.Filled.Add,
-            onClick = {
-                // viewModel::addQuest
-            },
+            onClick = viewModel::toggleNewQuestPopup,
             contentDescription = "Add quest",
         ),
         menuItems = listOf(
@@ -79,7 +88,7 @@ fun QuestMapScreen(
         ) {
             uiState.quest?.let {
                 uiState.nextQuest?.let { nextQuest ->
-                    Text(text = "Next quest")
+                    Text(text = "Superquest")
                     OtherQuestCard(
                         name = nextQuest.name,
                         onClick = {
@@ -91,20 +100,20 @@ fun QuestMapScreen(
                 }
 
                 Spacer(modifier = Modifier.height(Gaps.large()))
-                Text(text = "Current quest")
+                Text(text = "Quest")
                 CurrentQuestCard(
                     name = it.name,
                     isComplete = it.isComplete,
-                    isReady = uiState.previousQuests?.all { quest -> quest.isComplete } ?: true,
+                    isReady = uiState.subQuests?.all { quest -> quest.isComplete } ?: true,
                     onToggleComplete = viewModel::toggleComplete,
                 )
                 Spacer(modifier = Modifier.height(Gaps.large()))
             }
 
             // display previous quests or final quests
-            uiState.previousQuests?.let { previousQuests ->
+            uiState.subQuests?.let { previousQuests ->
                 val header = if (uiState.quest != null) {
-                    "Previous quests"
+                    "Subquests"
                 } else {
                     "Final quests"
                 }
@@ -125,6 +134,30 @@ fun QuestMapScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun NewQuestPopup(
+    showNewQuestPopup: Boolean,
+    newQuestName: String,
+    onNewQuestNameChange: (String) -> Unit,
+    createNewQuest: () -> Unit,
+    cancelNewQuest: () -> Unit,
+) {
+    Popup(
+        showDialog = showNewQuestPopup,
+    ) {
+        OutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = newQuestName,
+            onValueChange = onNewQuestNameChange,
+            label = { Text(text = "Quest name") },
+        )
+        PopupButtons(
+            onAccept = createNewQuest,
+            onCancel = cancelNewQuest,
+        )
     }
 }
 

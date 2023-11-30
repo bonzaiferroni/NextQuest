@@ -19,10 +19,10 @@ interface QuestDao {
     @Query("SELECT * FROM quest WHERE name LIKE :name")
     fun getByName(name: String): Flow<List<Quest>>
 
-    @Query("SELECT * FROM quest WHERE nextQuestId = :nextQuestId")
+    @Query("SELECT * FROM quest WHERE superQuestId = :nextQuestId")
     fun getPreviousQuests(nextQuestId: Int): Flow<List<Quest>>
 
-    @Query("SELECT * FROM quest WHERE nextQuestId IS NULL")
+    @Query("SELECT * FROM quest WHERE superQuestId IS NULL")
     fun getFinalQuests(): Flow<List<Quest>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)

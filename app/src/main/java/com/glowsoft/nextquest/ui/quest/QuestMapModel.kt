@@ -30,8 +30,8 @@ class QuestMapModel(
         if (questId != 0) {
             viewModelScope.launch {
                 dataRepository.getQuestById(questId).collect { quest ->
-                    val nextQuest = if (quest.nextQuestId != null) {
-                        dataRepository.getQuestById(quest.nextQuestId).first()
+                    val nextQuest = if (quest.superQuestId != null) {
+                        dataRepository.getQuestById(quest.superQuestId).first()
                     } else {
                         null
                     }
@@ -39,14 +39,14 @@ class QuestMapModel(
                 }
             }
             viewModelScope.launch {
-                dataRepository.getPreviousQuestsById(questId).collect {
-                    state = state.copy(previousQuests = it)
+                dataRepository.getSubQuestsById(questId).collect {
+                    state = state.copy(subQuests = it)
                 }
             }
         } else {
             viewModelScope.launch {
                 dataRepository.getFinalQuests().collect {
-                    state = state.copy(previousQuests = it)
+                    state = state.copy(subQuests = it)
                 }
             }
         }
@@ -60,10 +60,35 @@ class QuestMapModel(
             }
         }
     }
+
+    fun toggleNewQuestPopup() {
+        state = state.copy(
+            showNewQuestPopup = !state.showNewQuestPopup,
+            newQuestName = "",
+        )
+    }
+
+    fun onNewQuestNameChange(newQuestName: String) {
+        state = state.copy(newQuestName = newQuestName)
+    }
+
+    fun createNewQuest() {
+        val newQuestName = state.newQuestName
+        if (newQuestName.isNotBlank()) {
+            viewModelScope.launch {
+                val superQuestId = if (questId == 0) null else questId
+                val quest = Quest(name = newQuestName, superQuestId = superQuestId)
+                dataRepository.insertQuest(quest)
+                state = state.copy(newQuestName = "", showNewQuestPopup = false)
+            }
+        }
+    }
 }
 
 data class QuestMapUiState(
     val nextQuest: Quest? = null,
     val quest: Quest? = null,
-    val previousQuests: List<Quest>? = null,
+    val subQuests: List<Quest>? = null,
+    val newQuestName: String = "",
+    val showNewQuestPopup: Boolean = false,
 )

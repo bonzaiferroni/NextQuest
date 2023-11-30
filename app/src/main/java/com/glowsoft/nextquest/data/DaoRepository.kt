@@ -9,7 +9,7 @@ class DaoRepository(
 ) : DataRepository {
     override fun getAllQuests(): Flow<List<Quest>> = questDao.getAll()
     override fun getQuestById(id: Int) = questDao.getById(id)
-    override fun getPreviousQuestsById(nextQuestId: Int) = questDao.getPreviousQuests(nextQuestId)
+    override fun getSubQuestsById(nextQuestId: Int) = questDao.getPreviousQuests(nextQuestId)
     override fun getFinalQuests(): Flow<List<Quest>> = questDao.getFinalQuests()
     override suspend fun insertQuest(quest: Quest) = questDao.insert(quest).toInt()
     override suspend fun updateQuest(quest: Quest) = questDao.update(quest)
