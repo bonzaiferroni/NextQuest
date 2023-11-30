@@ -31,15 +31,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.bollwerks.memoryghost.utils.ghostui.MoreMenu
-import com.bollwerks.memoryghost.utils.ghostui.MoreMenuItem
+import com.glowsoft.phaser.elements.MoreMenu
+import com.glowsoft.phaser.elements.MoreMenuItem
 import com.glowsoft.nextquest.data.SampleRepository
 import com.glowsoft.nextquest.ui.theme.NextQuestTheme
-import com.glowsoft.nextquest.utils.Paddings
-import com.glowsoft.nextquest.utils.PreviewDark
-import com.glowsoft.nextquest.utils.ghostui.Toasty
-import com.glowsoft.nextquest.utils.paddingSmall
-import com.glowsoft.nextquest.utils.spacedBySmall
+import com.glowsoft.phaser.PreviewDark
+import com.glowsoft.phaser.elements.Toasty
+import com.glowsoft.phaser.layout.paddingSmall
+import com.glowsoft.phaser.layout.spacedBySmall
 
 @Composable
 fun ExportScreen(
@@ -124,7 +123,7 @@ fun SavedFileCard(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = Paddings.small()),
+                .padding(horizontal = com.glowsoft.phaser.layout.Paddings.small()),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBySmall()
         ) {

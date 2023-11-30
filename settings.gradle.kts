@@ -16,3 +16,4 @@ dependencyResolutionManagement {
 rootProject.name = "NextQuest"
 include(":app")
 include(":eznav")
+include(":phaser")

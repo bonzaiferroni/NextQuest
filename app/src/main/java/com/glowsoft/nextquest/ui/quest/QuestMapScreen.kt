@@ -30,25 +30,26 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavController
 import com.bollwerks.eznav.EzScaffold
 import com.bollwerks.eznav.ScreenMenuItem
 import com.bollwerks.eznav.model.FabConfig
-import com.bollwerks.memoryghost.utils.ghostui.MoreMenu
-import com.bollwerks.memoryghost.utils.ghostui.MoreMenuItem
-import com.glowsoft.nextquest.utils.Gaps
-import com.glowsoft.nextquest.utils.Paddings
-import com.glowsoft.nextquest.utils.PreviewDark
-import com.glowsoft.nextquest.utils.spacedBySmall
+import com.glowsoft.phaser.elements.MoreMenu
+import com.glowsoft.phaser.elements.MoreMenuItem
 import com.glowsoft.nextquest.AppRoutes
 import com.glowsoft.nextquest.RouteKeys
 import com.glowsoft.nextquest.data.SampleRepository
 import com.glowsoft.nextquest.model.Quest
 import com.glowsoft.nextquest.ui.theme.NextQuestTheme
-import com.glowsoft.nextquest.utils.ghostui.Popup
-import com.glowsoft.nextquest.utils.ghostui.PopupButtons
+import com.glowsoft.phaser.PreviewDark
+import com.glowsoft.phaser.elements.Popup
+import com.glowsoft.phaser.elements.PopupButtons
+import com.glowsoft.phaser.layout.Gaps
+import com.glowsoft.phaser.layout.Paddings
+import com.glowsoft.phaser.layout.spacedBySmall
 
 @Composable
 fun QuestMapScreen(
@@ -104,7 +105,7 @@ fun QuestMapScreen(
                 } ?: run {
                     Row {
                         Spacer(modifier = Modifier.weight(1f))
-                        QuestNavButton (
+                        QuestNavButton(
                             onClick = {
                                 AppRoutes.QuestMap.navigate(navController, 0)
                             },
@@ -177,6 +178,7 @@ fun QuestRow(
     isReady: Boolean,
     isComplete: Boolean,
     onToggleComplete: () -> Unit,
+    textStyle: TextStyle = MaterialTheme.typography.bodyLarge,
     menuItems: List<MoreMenuItem>? = null,
 ) {
     Row(
@@ -189,11 +191,7 @@ fun QuestRow(
         )
         Text(
             text = name,
-            modifier = Modifier.padding(
-                top = Paddings.small(),
-                bottom = Paddings.small(),
-                end = Paddings.small(),
-            )
+            style = textStyle,
         )
         menuItems?.let { items ->
             Spacer(modifier = Modifier.weight(1f))
@@ -229,12 +227,28 @@ fun CurrentQuestCard(
             modifier = modifier
                 .fillMaxWidth(),
         ) {
-            QuestRow(
-                name = quest.name,
-                isComplete = quest.completedAt != null,
-                isReady = isReady,
-                onToggleComplete = onToggleComplete,
-            )
+            Column {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Checkbox(
+                        checked = quest.completedAt != null,
+                        onCheckedChange = { onToggleComplete() },
+                        enabled = isReady,
+
+                    )
+                    Text(
+                        text = quest.name,
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                }
+                Column(
+                    modifier = Modifier
+                        .padding(Paddings.small()),
+                ) {
+                    // hmm
+                }
+            }
         }
 
         subquests?.let { quests ->
@@ -313,7 +327,7 @@ fun QuestNavButton(
 fun QuestMapPreview() {
     NextQuestTheme {
         var savedStateHandle = SavedStateHandle()
-        savedStateHandle[RouteKeys.id] = 1
+        savedStateHandle[RouteKeys.id] = 2
         QuestMapScreen(
             drawerState = DrawerState(DrawerValue.Closed),
             navController = null,

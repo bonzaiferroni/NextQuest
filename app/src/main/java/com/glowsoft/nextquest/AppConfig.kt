@@ -15,6 +15,7 @@ import com.glowsoft.nextquest.data.AppDatabase
 import com.glowsoft.nextquest.data.DaoRepository
 import com.glowsoft.nextquest.ui.export.ExportModel
 import com.glowsoft.nextquest.ui.export.ExportScreen
+import com.glowsoft.nextquest.ui.quest.NextQuestScreen
 import com.glowsoft.nextquest.ui.quest.QuestMapModel
 import com.glowsoft.nextquest.ui.quest.QuestMapScreen
 
@@ -68,7 +69,7 @@ val appConfig = EzConfig(
             },
             drawerLink = DrawerLinkConfig(
                 route = AppRoutes.QuestMap,
-                title = "Quest Map",
+                title = "Map",
                 emoji = "🌄"
             ),
             isDefaultRoute = true,
@@ -88,7 +89,23 @@ val appConfig = EzConfig(
                 emoji = "📤"
             ),
             scaffold = ScaffoldConfig(
-                title = "📤"
+                title = "Export Data"
+            ),
+        ),
+        ScreenConfig(
+            route = AppRoutes.NextQuest,
+            content = { _, _, vmFactory ->
+                NextQuestScreen(
+                    viewModel = viewModel(factory = vmFactory)
+                )
+            },
+            drawerLink = DrawerLinkConfig(
+                route = AppRoutes.NextQuest,
+                title = "Next",
+                emoji = "🔜"
+            ),
+            scaffold = ScaffoldConfig(
+                title = "Next Quest"
             ),
         )
     )

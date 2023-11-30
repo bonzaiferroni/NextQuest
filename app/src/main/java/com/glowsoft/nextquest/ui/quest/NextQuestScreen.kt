@@ -6,10 +6,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 
 @Composable
-fun EditQuestScreen(
-    navController: NavController?,
-    drawerState: DrawerState?,
-    viewModel: EditQuestModel,
+fun NextQuestScreen(
+    viewModel: NextQuestModel,
     modifier: Modifier = Modifier,
 ) {
     // TODO

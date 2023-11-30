@@ -84,7 +84,10 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    // projects
     implementation(project(":eznav"))
+    implementation(project(":phaser"))
 
     val room_version = "2.6.0"
 

@@ -6,12 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.glowsoft.nextquest.data.DataRepository
 import com.glowsoft.nextquest.data.DataSnapshot
 import com.glowsoft.nextquest.data.SampleData
-import com.glowsoft.nextquest.data.SampleRepository
 import com.glowsoft.nextquest.data.insertQuests
 import com.glowsoft.nextquest.model.Quest
-import com.glowsoft.nextquest.utils.jsonToObject
-import com.glowsoft.nextquest.utils.loadJsonFromFile
-import com.glowsoft.nextquest.utils.objectToFile
+import com.glowsoft.phaser.jsonToObject
+import com.glowsoft.phaser.loadJsonFromFile
+import com.glowsoft.phaser.objectToFile
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
