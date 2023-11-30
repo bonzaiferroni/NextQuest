@@ -6,16 +6,17 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.outlined.ArrowForward
+import androidx.compose.material.icons.outlined.KeyboardArrowDown
+import androidx.compose.material.icons.outlined.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
@@ -28,12 +29,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavController
 import com.bollwerks.eznav.EzScaffold
 import com.bollwerks.eznav.ScreenMenuItem
 import com.bollwerks.eznav.model.FabConfig
+import com.bollwerks.memoryghost.utils.ghostui.MoreMenu
+import com.bollwerks.memoryghost.utils.ghostui.MoreMenuItem
 import com.glowsoft.nextquest.utils.Gaps
 import com.glowsoft.nextquest.utils.Paddings
 import com.glowsoft.nextquest.utils.PreviewDark
@@ -41,6 +45,7 @@ import com.glowsoft.nextquest.utils.spacedBySmall
 import com.glowsoft.nextquest.AppRoutes
 import com.glowsoft.nextquest.RouteKeys
 import com.glowsoft.nextquest.data.SampleRepository
+import com.glowsoft.nextquest.model.Quest
 import com.glowsoft.nextquest.ui.theme.NextQuestTheme
 import com.glowsoft.nextquest.utils.ghostui.Popup
 import com.glowsoft.nextquest.utils.ghostui.PopupButtons
@@ -65,7 +70,7 @@ fun QuestMapScreen(
     EzScaffold(
         modifier = modifier,
         drawerState = drawerState,
-        title = "🌄",
+        title = uiState.quest?.name ?: "Final Quests",
         fabConfig = FabConfig(
             icon = Icons.Filled.Add,
             onClick = viewModel::toggleNewQuestPopup,
@@ -86,49 +91,54 @@ fun QuestMapScreen(
                 .padding(horizontal = Paddings.small()),
             verticalArrangement = Arrangement.spacedBy(Gaps.medium()),
         ) {
-            uiState.quest?.let {
-                uiState.nextQuest?.let { nextQuest ->
-                    Text(text = "Superquest")
+            uiState.quest?.let { quest ->
+                uiState.superquest?.let { superquest ->
                     OtherQuestCard(
-                        name = nextQuest.name,
-                        onClick = {
-                            AppRoutes.QuestMap.navigate(navController, nextQuest.id)
-                        }
+                        quest = superquest,
+                        onNavigate = {
+                            AppRoutes.QuestMap.navigate(navController, superquest.id)
+                        },
+                        navIcon = Icons.Outlined.KeyboardArrowUp,
+                        menuItems = emptyList(),
                     )
                 } ?: run {
-                    MapButton()
+                    Row {
+                        Spacer(modifier = Modifier.weight(1f))
+                        QuestNavButton (
+                            onClick = {
+                                AppRoutes.QuestMap.navigate(navController, 0)
+                            },
+                            navIcon = Icons.Outlined.KeyboardArrowUp,
+                        )
+                    }
                 }
 
-                Spacer(modifier = Modifier.height(Gaps.large()))
-                Text(text = "Quest")
                 CurrentQuestCard(
-                    name = it.name,
-                    isComplete = it.isComplete,
-                    isReady = uiState.subQuests?.all { quest -> quest.isComplete } ?: true,
+                    quest = quest,
+                    isReady = uiState.subquests?.all { subquest ->
+                        subquest.completedAt != null
+                    } ?: true,
                     onToggleComplete = viewModel::toggleComplete,
+                    subquests = uiState.subquests,
+                    navController = navController,
                 )
-                Spacer(modifier = Modifier.height(Gaps.large()))
             }
 
             // display previous quests or final quests
-            uiState.subQuests?.let { previousQuests ->
-                val header = if (uiState.quest != null) {
-                    "Subquests"
-                } else {
-                    "Final quests"
-                }
-                Text(text = header)
+            uiState.finalQuests?.let { quests ->
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(Gaps.medium()),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                 ) {
-                    items(previousQuests) { quest ->
+                    items(quests) { quest ->
                         OtherQuestCard(
-                            name = quest.name,
-                            isComplete = quest.isComplete,
-                            onClick = {
+                            quest = quest,
+                            onNavigate = {
                                 AppRoutes.QuestMap.navigate(navController, quest.id)
-                            }
+                            },
+                            navIcon = Icons.Outlined.KeyboardArrowDown,
+                            menuItems = emptyList(),
                         )
                     }
                 }
@@ -162,26 +172,100 @@ fun NewQuestPopup(
 }
 
 @Composable
-fun MapButton(
-    modifier: Modifier = Modifier,
-    navController: NavController? = null,
+fun QuestRow(
+    name: String,
+    isReady: Boolean,
+    isComplete: Boolean,
+    onToggleComplete: () -> Unit,
+    menuItems: List<MoreMenuItem>? = null,
 ) {
-    Button(
-        modifier = modifier,
-        onClick = {
-            AppRoutes.QuestMap.navigate(navController)
-        }
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(text = "Map", style = MaterialTheme.typography.bodyLarge)
+        Checkbox(
+            checked = isComplete,
+            onCheckedChange = { onToggleComplete() },
+            enabled = isReady,
+        )
+        Text(
+            text = name,
+            modifier = Modifier.padding(
+                top = Paddings.small(),
+                bottom = Paddings.small(),
+                end = Paddings.small(),
+            )
+        )
+        menuItems?.let { items ->
+            Spacer(modifier = Modifier.weight(1f))
+            MoreMenu(
+                items = items,
+            )
+        }
+    }
+}
+
+@Composable
+fun CurrentQuestCard(
+    quest: Quest,
+    modifier: Modifier = Modifier,
+    isReady: Boolean = false,
+    onToggleComplete: () -> Unit,
+    subquests: List<Quest>?,
+    navController: NavController?,
+) {
+    if (quest.superquestId != null) {
+        modifier.padding(start = Paddings.indent())
+    }
+    Column(
+        verticalArrangement = Arrangement.spacedBy(Gaps.medium()),
+        modifier = modifier
+            .fillMaxWidth()
+    ) {
+        Card(
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            ),
+            modifier = modifier
+                .fillMaxWidth(),
+        ) {
+            QuestRow(
+                name = quest.name,
+                isComplete = quest.completedAt != null,
+                isReady = isReady,
+                onToggleComplete = onToggleComplete,
+            )
+        }
+
+        subquests?.let { quests ->
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(Gaps.medium()),
+                modifier = Modifier
+                    .padding(start = Paddings.indent())
+                    .fillMaxWidth()
+            ) {
+                items(quests) { quest ->
+                    OtherQuestCard(
+                        quest = quest,
+                        onNavigate = {
+                            AppRoutes.QuestMap.navigate(navController, quest.id)
+                        },
+                        navIcon = Icons.Outlined.KeyboardArrowDown,
+                        menuItems = emptyList(),
+                    )
+                }
+            }
+        }
     }
 }
 
 @Composable
 fun OtherQuestCard(
-    name: String,
+    quest: Quest,
     modifier: Modifier = Modifier,
-    isComplete: Boolean = false,
-    onClick: () -> Unit = {},
+    onNavigate: () -> Unit,
+    navIcon: ImageVector,
+    menuItems: List<MoreMenuItem>,
 ) {
     Row(
         modifier = modifier
@@ -192,52 +276,35 @@ fun OtherQuestCard(
             modifier = Modifier
                 .weight(1f)
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Checkbox(
-                    checked = isComplete,
-                    onCheckedChange = { },
-                    enabled = false,
-                )
-                Text(text = name)
-            }
-        }
-        Button(
-            onClick = onClick,
-            shape = RoundedCornerShape(12.dp),
-            contentPadding = PaddingValues(all = 12.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.ArrowForward,
-                contentDescription = null,
+            QuestRow(
+                name = quest.name,
+                isComplete = quest.completedAt != null,
+                isReady = false,
+                onToggleComplete = {},
+                menuItems = menuItems,
             )
         }
+        QuestNavButton(
+            onClick = onNavigate,
+            navIcon = navIcon,
+        )
     }
 }
 
 @Composable
-fun CurrentQuestCard(
-    name: String,
-    modifier: Modifier = Modifier,
-    isComplete: Boolean = false,
-    isReady: Boolean = false,
-    onToggleComplete: (Boolean) -> Unit,
+fun QuestNavButton(
+    onClick: () -> Unit,
+    navIcon: ImageVector,
 ) {
-    Card(
-        modifier = modifier
-            .fillMaxWidth(),
+    Button(
+        onClick = onClick,
+        shape = RoundedCornerShape(12.dp),
+        contentPadding = PaddingValues(all = 12.dp)
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Checkbox(
-                checked = isComplete,
-                onCheckedChange = onToggleComplete,
-                enabled = isReady,
-            )
-            Text(text = name)
-        }
+        Icon(
+            imageVector = navIcon,
+            contentDescription = null,
+        )
     }
 }
 
@@ -246,7 +313,7 @@ fun CurrentQuestCard(
 fun QuestMapPreview() {
     NextQuestTheme {
         var savedStateHandle = SavedStateHandle()
-        savedStateHandle[RouteKeys.id] = 0
+        savedStateHandle[RouteKeys.id] = 1
         QuestMapScreen(
             drawerState = DrawerState(DrawerValue.Closed),
             navController = null,

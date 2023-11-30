@@ -1,6 +1,7 @@
 package com.glowsoft.nextquest.data
 
 import com.glowsoft.nextquest.model.Quest
+import java.time.Instant
 
 object SampleData {
 
@@ -11,17 +12,17 @@ object SampleData {
             Quest(id = ++id, name = "make coffee").apply {
                 nextQuestId = this.id
             },
-            Quest(id = ++id, name = "throw away used filter", superQuestId = nextQuestId,
-                isComplete = true),
-            Quest(id = ++id, name = "add coffee", superQuestId = nextQuestId).apply {
+            Quest(id = ++id, name = "throw away used filter", superquestId = nextQuestId,
+                completedAt = Instant.now()),
+            Quest(id = ++id, name = "add coffee", superquestId = nextQuestId).apply {
                 nextQuestId = this.id
             },
-            Quest(id = ++id, name = "add filter", superQuestId = nextQuestId),
+            Quest(id = ++id, name = "add filter", superquestId = nextQuestId),
             Quest(id = ++id, name = "get mail").apply {
                 nextQuestId = this.id
             },
-            Quest(id = ++id, name = "put on shoes", superQuestId = nextQuestId),
-            Quest(id = ++id, name = "get key", superQuestId = nextQuestId),
+            Quest(id = ++id, name = "put on shoes", superquestId = nextQuestId),
+            Quest(id = ++id, name = "get key", superquestId = nextQuestId),
         )
     }
 }

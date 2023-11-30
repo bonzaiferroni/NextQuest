@@ -71,6 +71,7 @@ val appConfig = EzConfig(
                 title = "Quest Map",
                 emoji = "🌄"
             ),
+            isDefaultRoute = true,
         ),
         ScreenConfig(
             route = AppRoutes.Export,
@@ -89,7 +90,6 @@ val appConfig = EzConfig(
             scaffold = ScaffoldConfig(
                 title = "📤"
             ),
-            isDefaultRoute = true,
         )
     )
 )

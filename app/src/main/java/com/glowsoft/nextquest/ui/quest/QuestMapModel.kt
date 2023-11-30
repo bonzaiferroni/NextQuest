@@ -30,32 +30,32 @@ class QuestMapModel(
         if (questId != 0) {
             viewModelScope.launch {
                 dataRepository.getQuestById(questId).collect { quest ->
-                    val nextQuest = if (quest.superQuestId != null) {
-                        dataRepository.getQuestById(quest.superQuestId).first()
+                    val nextQuest = if (quest.superquestId != null) {
+                        dataRepository.getQuestById(quest.superquestId).first()
                     } else {
                         null
                     }
-                    state = state.copy(quest = quest, nextQuest = nextQuest)
+                    state = state.copy(quest = quest, superquest = nextQuest)
                 }
             }
             viewModelScope.launch {
                 dataRepository.getSubQuestsById(questId).collect {
-                    state = state.copy(subQuests = it)
+                    state = state.copy(subquests = it)
                 }
             }
         } else {
             viewModelScope.launch {
                 dataRepository.getFinalQuests().collect {
-                    state = state.copy(subQuests = it)
+                    state = state.copy(finalQuests = it)
                 }
             }
         }
     }
 
-    fun toggleComplete(isComplete: Boolean) {
+    fun toggleComplete() {
         state.quest?.let {
             viewModelScope.launch {
-                val quest = it.copy(isComplete = isComplete)
+                val quest = it.copy(completedAt = it.completedAt)
                 dataRepository.updateQuest(quest)
             }
         }
@@ -77,7 +77,7 @@ class QuestMapModel(
         if (newQuestName.isNotBlank()) {
             viewModelScope.launch {
                 val superQuestId = if (questId == 0) null else questId
-                val quest = Quest(name = newQuestName, superQuestId = superQuestId)
+                val quest = Quest(name = newQuestName, superquestId = superQuestId)
                 dataRepository.insertQuest(quest)
                 state = state.copy(newQuestName = "", showNewQuestPopup = false)
             }
@@ -86,9 +86,10 @@ class QuestMapModel(
 }
 
 data class QuestMapUiState(
-    val nextQuest: Quest? = null,
+    val superquest: Quest? = null,
     val quest: Quest? = null,
-    val subQuests: List<Quest>? = null,
+    val subquests: List<Quest>? = null,
+    val finalQuests: List<Quest>? = null,
     val newQuestName: String = "",
     val showNewQuestPopup: Boolean = false,
 )

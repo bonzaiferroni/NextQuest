@@ -8,13 +8,13 @@ data class DataSnapshot(
 
 suspend fun DataRepository.insertQuests(quests: List<Quest>) {
     quests
-        .filter { it.superQuestId == null }
+        .filter { it.superquestId == null }
         .forEach { insertQuestTree(it, quests)}
 }
 
 suspend fun DataRepository.insertQuestTree(quest: Quest, quests: List<Quest>) {
     val newId = this.insertQuest(quest.copy(id = 0))
     quests
-        .filter { it.superQuestId == quest.id }
-        .forEach { insertQuestTree(it.copy(superQuestId = newId), quests) }
+        .filter { it.superquestId == quest.id }
+        .forEach { insertQuestTree(it.copy(superquestId = newId), quests) }
 }

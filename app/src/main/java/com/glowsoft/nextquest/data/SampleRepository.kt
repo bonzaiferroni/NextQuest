@@ -14,11 +14,11 @@ class SampleRepository : DataRepository {
     }
 
     override fun getSubQuestsById(nextQuestId: Int): Flow<List<Quest>> {
-        return flowOf(SampleData.quests.filter { it.superQuestId == nextQuestId })
+        return flowOf(SampleData.quests.filter { it.superquestId == nextQuestId })
     }
 
     override fun getFinalQuests(): Flow<List<Quest>> {
-        return flowOf(SampleData.quests.filter { it.superQuestId == null })
+        return flowOf(SampleData.quests.filter { it.superquestId == null })
     }
 
     override suspend fun insertQuest(quest: Quest): Int {
